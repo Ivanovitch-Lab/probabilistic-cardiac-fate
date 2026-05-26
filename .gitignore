@@ -11,12 +11,11 @@ __pycache__/
 venv/
 *.egg-info/
 
-# Manuscript text (pre-publication; not for public release)
+# Working documents
 *.docx
 ~$*
 
-# Top-level composite publication figures — only the per-panel outputs
-# under figures/ are part of the public release.
+# Top-level images (only files under figures/ are tracked)
 /Figure1.png
 /Figure2.png
 /Figure3.png

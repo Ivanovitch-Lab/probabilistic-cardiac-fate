@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # reproduce.sh
-# Regenerates every figure and table in Ivanovitch (BioEssays 2026) from
+# Regenerates every figure and table in the accompanying manuscript from
 # scratch — including the Curveball permutation null model
 # (Supplementary_Table_S2.csv), the Ward k=3 hierarchical clustering
 # (Supplementary_Table_S3.csv + S4.csv), and the potency-graph clone

@@ -2,7 +2,7 @@
 """
 Figure3c.py
 ===========
-Reproduces Figure 3c of Ivanovitch (BioEssays 2026):
+Reproduces Figure 3c of the accompanying manuscript:
 the full lineage-potency hierarchy as a directed acyclic graph, with the
 29 potency states arranged into three k=3 cluster bands (LV/RV-biased on
 the left, AVC/AB-biased in the centre, Atria/OFT-biased on the right) and

@@ -1,12 +1,11 @@
-# Code and data for Ivanovitch (BioEssays 2026)
+# Beyond binary: cardiac patterning as probabilistic fate restriction
 
-> Ivanovitch, K. (2026). **Beyond binary: cardiac patterning as
-> probabilistic fate restriction.
+> Ivanovitch, K. **Beyond binary: cardiac patterning as probabilistic
+> fate restriction.** *Manuscript in preparation.*
 
 This repository contains the analysis code, processed data, and
 figure-generating scripts behind every quantitative figure and table in
-the manuscript. Each script reproduces a single panel from the
-published version.
+the manuscript. Each script reproduces a single panel.
 
 ## Reproduce all figures and tables (one command)
 
@@ -142,9 +141,9 @@ independent and can run without any other script. `Figure3d`,
 
 ## Citation
 
-Ivanovitch, K. (2026). Beyond binary: cardiac patterning as
-probabilistic fate restriction. *BioEssays.*
-DOI: `10.xxxx/xxxxx` *(to be assigned on acceptance)*
+Ivanovitch, K. Beyond binary: cardiac patterning as probabilistic
+fate restriction. *Manuscript in preparation.* Citation will be
+updated on acceptance.
 
 ## Contact
 

@@ -2,7 +2,7 @@
 """
 Table3.py
 =========
-Reproduces Table 3 of Ivanovitch (BioEssays 2026):
+Reproduces Table 3 of the accompanying manuscript:
 per-terminal backbone justification — for each of the six terminal fates
 this reports the number of root→terminal paths, the backbone (rank-1)
 score, the runner-up score, total score mass over all paths, dominance

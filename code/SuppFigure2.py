@@ -2,7 +2,7 @@
 """
 SuppFigure2.py
 ===========
-Reproduces Supplementary Figure 2 of Ivanovitch (BioEssays 2026):
+Reproduces Supplementary Figure 2 of the accompanying manuscript:
 the per-terminal backbone paths through the potency graph implied by the
 rank-1 (left) and rank-3 (right) plausible restriction-sequence topologies
 shown in Figure 4b and Figure 4c. Two side-by-side panels share the same

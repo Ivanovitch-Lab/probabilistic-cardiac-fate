@@ -2,7 +2,7 @@
 """
 SuppFigure1.py
 ==============
-Reproduces Supplementary Figure 1 of Ivanovitch (BioEssays 2026):
+Reproduces Supplementary Figure 1 of the accompanying manuscript:
 sensitivity of clonal-coupling z-scores to the Small/Large size threshold.
 Runs the Curveball permutation null at five cutoffs (20, 25, 30, 35, 40
 cells), in each Small and Large bin, and draws a 2 × 5 grid of heatmaps.

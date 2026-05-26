@@ -2,7 +2,7 @@
 """
 Table1.py
 =========
-Reproduces Table 1 of Ivanovitch (BioEssays 2026):
+Reproduces Table 1 of the accompanying manuscript:
 robustness of Small-clone co-occurrence z-scores to the Small/Large size
 threshold. 15 region-pairs (rows) × 5 size cutoffs (columns). Cells with
 FDR ≤ 0.05 are bolded and shaded pale orange.

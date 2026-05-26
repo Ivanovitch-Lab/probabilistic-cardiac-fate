@@ -2,7 +2,7 @@
 """
 Figure3b.py
 ===========
-Reproduces Figure 3b of Ivanovitch (BioEssays 2026):
+Reproduces Figure 3b of the accompanying manuscript:
 log2 fold-enrichment of each k=3 cluster's mean fate composition relative
 to the mean across all clustered intermediate states. Three rows (one per
 cluster) × six columns (one per terminal fate).

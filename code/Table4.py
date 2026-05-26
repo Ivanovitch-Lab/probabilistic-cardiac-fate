@@ -2,7 +2,7 @@
 """
 Table4.py
 =========
-Reproduces Table 4 of Ivanovitch (BioEssays 2026):
+Reproduces Table 4 of the accompanying manuscript:
 per-topology summary for the five surviving restriction-sequence
 topologies shown in Figure 4d, ranked by joint score (product of path
 scores across the six terminals; path score = product of edge supports
