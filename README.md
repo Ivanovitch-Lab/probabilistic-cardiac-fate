@@ -47,7 +47,6 @@ pip install numpy pandas scipy matplotlib networkx pydot
 ## Repository layout
 
 ```
-Final_Manuscript/
 ├── code/                  Python scripts (one per figure/table panel)
 │   ├── Figure1b.py        Live-imaging clone-size strip plot
 │   ├── Figure2a.py        Clone size vs regional breadth
@@ -75,7 +74,9 @@ Final_Manuscript/
 │   ├── Supplementary_Table_S4.csv   Per-state fate spectrum + k=3 cluster
 │   ├── Abukar_clone_data.csv        Live-imaging per-clone counts (Abukar et al. 2025)
 │   └── clone_path_attachments.csv   Clone-to-path attachments with propagated support
-└── figures/               PNG outputs at 300 dpi
+├── figures/               PNG outputs at 300 dpi
+├── reproduce.sh           one-command cold-start reproduction
+└── README.md              this file
 ```
 
 The four `Supplementary_Table_S{1–4}.csv` files are cited as
