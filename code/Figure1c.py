@@ -2,7 +2,7 @@
 """
 Figure1c.py
 ===========
-Reproduces Figure 1c of Ivanovitch (BioEssays 2026):
+Reproduces Figure 1c of Ivanovitch:
 strip plot of myocardial cells per clone from the Abukar et al. (2025) live-
 imaging dataset, split by cardiac identity (AVC/LV vs Atria/inflow) and
 coloured by whether the clone is single-fate or multi-fated.
