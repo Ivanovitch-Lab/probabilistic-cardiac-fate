@@ -2,7 +2,7 @@
 """
 Figure2a.py
 ===========
-Reproduces Figure 2a of Ivanovitch (BioEssays 2026):
+Reproduces Figure 2a:
 scatter plot of clone size vs number of cardiac regions occupied per clone,
 with the Small/Large size threshold at 30 cells.
 
