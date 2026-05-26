@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Figure1c.py
+Figure1b.py
 ===========
-Reproduces Figure 1c of Ivanovitch:
+Reproduces Figure 1b of Ivanovitch:
 strip plot of myocardial cells per clone from the Abukar et al. (2025) live-
 imaging dataset, split by cardiac identity (AVC/LV vs Atria/inflow) and
 coloured by whether the clone is single-fate or multi-fated.
@@ -16,11 +16,11 @@ Input
 
 Output
 ------
-../figures/Figure1c.png
+../figures/Figure1b.png
 
 Run
 ---
-    python Figure1c.py
+    python Figure1b.py
 """
 
 import os
@@ -38,7 +38,7 @@ RANDOM_SEED = 0
 
 _HERE       = os.path.dirname(os.path.abspath(__file__))
 INPUT_FILE  = os.path.join(_HERE, "..", "data", "Abukar_clone_data.csv")
-OUT_PNG     = os.path.join(_HERE, "..", "figures", "Figure1c.png")
+OUT_PNG     = os.path.join(_HERE, "..", "figures", "Figure1b.png")
 
 # Differentiated non-myocardial fates used to classify clones as multi-fated.
 # "Meso" is undifferentiated mesoderm and is not counted as a fate alternative.

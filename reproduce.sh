@@ -24,7 +24,7 @@ python Figure3a.py
 python _build_attachments.py
 
 # Step 4 — every remaining figure and table (no inter-dependencies)
-for f in Figure1c.py Figure2a.py Figure2b.py Figure3b.py Figure3c.py \
+for f in Figure1b.py Figure2a.py Figure2b.py Figure3b.py Figure3c.py \
          Figure3d.py Figure4a.py Figure4b.py Figure4c.py \
          SuppFigure2.py Table1.py Table2.py Table3.py Table4.py; do
     python "$f"

@@ -49,7 +49,7 @@ pip install numpy pandas scipy matplotlib networkx pydot
 ```
 Final_Manuscript/
 ├── code/                  Python scripts (one per figure/table panel)
-│   ├── Figure1c.py        Live-imaging clone-size strip plot
+│   ├── Figure1b.py        Live-imaging clone-size strip plot
 │   ├── Figure2a.py        Clone size vs regional breadth
 │   ├── Figure2b.py        Co-occurrence z-score heatmaps (cutoff = 30)
 │   ├── Figure3a.py        Fate-spectrum dendrogram + heatmap
@@ -80,7 +80,7 @@ Final_Manuscript/
 
 The four `Supplementary_Table_S{1–4}.csv` files are cited as
 Supplementary Tables in the manuscript. `Abukar_clone_data.csv`
-re-publishes the live-imaging per-clone counts used by Figure 1c
+re-publishes the live-imaging per-clone counts used by Figure 1b
 (Abukar et al. 2025). `clone_path_attachments.csv` is a cached
 intermediate (clones propagated along every root-to-terminal path)
 that `_build_attachments.py` regenerates from S1 + S3 — it is shipped
@@ -118,7 +118,7 @@ python Figure3a.py
 python _build_attachments.py
 
 # Step 4 — every remaining figure and table (any order)
-python Figure1c.py
+python Figure1b.py
 python Figure2a.py
 python Figure2b.py
 python Figure3b.py
@@ -134,7 +134,7 @@ python Table3.py
 python Table4.py
 ```
 
-`Figure1c`, `Figure2a`, `Figure2b`, `Figure4b`, `Figure4c` are
+`Figure1b`, `Figure2a`, `Figure2b`, `Figure4b`, `Figure4c` are
 independent and can run without any other script. `Figure3d`,
 `Figure4a`, `SuppFigure2`, `Table3` and `Table4` all consume
 `clone_path_attachments.csv`, so they require Step 3 to have run first.
