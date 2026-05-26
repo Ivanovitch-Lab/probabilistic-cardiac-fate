@@ -2,7 +2,7 @@
 """
 Figure2b.py
 ===========
-Reproduces Figure 2b of Ivanovitch (BioEssays 2026):
+Reproduces Figure 2b:
 pairwise clonal-coupling z-score heatmaps for Small (≤ 30 cells) and Large
 (> 30 cells) clones, at the main size cutoff of 30 cells. Asterisks mark
 pairs significant after BH FDR correction (FDR ≤ 0.05).
