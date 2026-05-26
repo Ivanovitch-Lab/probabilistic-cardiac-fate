@@ -1,0 +1,25 @@
+# OS / editor cruft
+.DS_Store
+*.swp
+*~
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Manuscript text (pre-publication; not for public release)
+*.docx
+~$*
+
+# Top-level composite publication figures — only the per-panel outputs
+# under figures/ are part of the public release.
+/Figure1.png
+/Figure2.png
+/Figure3.png
+/Figure4.png
+/Supplementary Figure 1.png
+/Supplementary Figure 2.png
