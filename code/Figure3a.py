@@ -2,13 +2,13 @@
 """
 Figure3a.py
 ===========
-Reproduces Figure 3a of Ivanovitch (BioEssays 2026):
+Reproduces Figure 3a:
 hierarchical clustering of intermediate potency-state fate spectra
 (dendrogram + heatmap). The 22 multi-region states with 2–5 regions are
 clustered with Ward linkage on Euclidean distances; the k = 3 cut is
 shown as a coloured strip alongside the heatmap.
 
-This script also writes the supplementary tables consumed by Figure3b
+This script also writes the supplementary tables used by Figure3b
 and Figure3c:
   Supplementary_Table_S3.csv — potency graph edges
   Supplementary_Table_S4.csv — per-state fate bias + k=3 cluster
