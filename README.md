@@ -76,16 +76,18 @@ Final_Manuscript/
 │   ├── Supplementary_Table_S3.csv   Potency graph edges
 │   ├── Supplementary_Table_S4.csv   Per-state fate spectrum + k=3 cluster
 │   ├── Abukar_clone_data.csv        Live-imaging per-clone counts (Abukar et al. 2025)
-│   ├── restriction_paths.csv        Enumerated paths through the potency graph
 │   └── clone_path_attachments.csv   Clone-to-path attachments with propagated support
 └── figures/               PNG outputs at 300 dpi
 ```
 
-The four `Supplementary_Table_S{1–4}.csv` files are cited as Supplementary
-Tables in the manuscript. The remaining three CSVs (`Abukar_clone_data.csv`,
-`restriction_paths.csv`, `clone_path_attachments.csv`) are intermediate /
-re-published data kept here for full reproducibility but not promoted to
-Supplementary Tables.
+The four `Supplementary_Table_S{1–4}.csv` files are cited as
+Supplementary Tables in the manuscript. `Abukar_clone_data.csv`
+re-publishes the live-imaging per-clone counts used by Figure 1c
+(Abukar et al. 2025). `clone_path_attachments.csv` is a cached
+intermediate (clones propagated along every root-to-terminal path)
+that `_build_attachments.py` regenerates from S1 + S3 — it is shipped
+so that individual figure / table scripts run standalone, but it is
+not cited in the manuscript.
 
 ## Running a single figure
 
