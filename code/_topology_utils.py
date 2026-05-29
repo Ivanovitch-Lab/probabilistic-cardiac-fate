@@ -281,7 +281,7 @@ def enumerate_full_space(G, clones_df, progress=False):
       survivors          : list (sorted by best_lp desc) of topologies
                            passing ALL filters; each is a dict with
                            sig, combo_paths (best realization, for drawing),
-                           best_idx, best_lp, weight, combo_rank
+                           best_idx, best_lp, weight, n_combos, combo_rank
       supported          : same, for the filter set with median DROPPED
                            (bifurcating + every node supported)
       weight_binary      : collective support weight of all bifurcating topos
@@ -302,6 +302,7 @@ def enumerate_full_space(G, clones_df, progress=False):
     all_lp = np.empty(total, dtype=np.float64)
     best = {}   # sig -> (best_lp, best_idx)
     mass = {}   # sig -> sum exp(lp) over its combos (bifurcating only)
+    count = {}  # sig -> number of combos collapsing to it (bifurcating only)
     distinct = set()
     map_lp = -np.inf
     map_sig = None
@@ -325,6 +326,7 @@ def enumerate_full_space(G, clones_df, progress=False):
             if prev is None or lp > prev[0]:
                 best[sig] = (lp, (i0, i1, i2, i3, i4, i5))
             mass[sig] = mass.get(sig, 0.0) + math.exp(lp)
+            count[sig] = count.get(sig, 0) + 1
         c += 1
         if progress and c % 2_000_000 == 0:
             print(f"    {c:,}/{total:,} ({100*c/total:4.1f}%) "
@@ -342,6 +344,7 @@ def enumerate_full_space(G, clones_df, progress=False):
             "best_idx": idx,
             "best_lp": lp,
             "weight": mass[sig] / total_mass,
+            "n_combos": count[sig],
             "combo_rank": total - int(np.searchsorted(asc, lp, "right")) + 1,
         }
 
