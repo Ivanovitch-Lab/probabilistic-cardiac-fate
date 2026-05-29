@@ -3,19 +3,26 @@
 Figure4a.py
 
 Overview of every distinct strictly-bifurcating restriction-sequence
-topology that survives all biological filters (strict bifurcation,
-every bifurcation clone-supported, monotone median clone size). Each
-plausible topology is rendered as a small cladogram, sharing the visual
-style used by Figure 4b (rank-1) and Figure 4c (rank-3). Together with
-Table 4 this panel summarises the inference landscape — Figure 4b and
-4c then zoom into individual topologies, and Figure 4d shows the
-graph-level path realization.
+topology that survives all biological filters (strict bifurcation, every
+bifurcation clone-supported, monotone median clone size). Crucially, this
+panel is built from an EXHAUSTIVE scan of the full ~21M-combination space
+(see _topology_utils.enumerate_full_space), not a top-K shortlist: the
+biological filters depend only on topology, not score, so a top-K cutoff
+silently under-counts the surviving topologies. Each survivor is rendered
+as a small cladogram in the visual style of Figure 4b (rank-1) and Figure
+4c (rank-3).
+
+Headline context printed and captioned here: strictly-bifurcating trees
+carry under ~1% of the total support, and the single most-probable
+reconstruction is itself multifurcating — i.e. the data favours
+simultaneous / unresolved restriction over any one clean binary tree, and
+no single binary tree dominates. The handful shown are the binary-tree
+*slice* of that uncertain landscape.
 """
 
 import math
 import os
 import sys
-from collections import defaultdict
 
 import matplotlib
 matplotlib.use("Agg")
@@ -23,142 +30,102 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from _graph_utils import (
-    compute_edge_supports, build_graph,
-)
+from _graph_utils import compute_edge_supports, build_graph
 from _sequence_utils import derive_restriction_sequence
 from _topology_utils import (
-    signature,
-    all_paths_per_terminal, top_k_combinations,
-    _build_children, _is_strictly_bifurcating,
-    _all_internal_nodes_supported, _is_median_monotonic,
-    load_clone_regions, compute_lca_medians,
-    draw_clado,
+    enumerate_full_space, load_clone_regions, draw_clado,
+    CLUSTER_PALETTE, ARC_COLOR,
 )
 
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_PNG = os.path.join(_HERE, "..", "figures", "Figure4a.png")
 
-# Search depth in joint-score combinations. After biological filters
-# (strict bifurcation, every bifurcation supported, monotone median) only a
-# handful survive; the figure renders all of them.
-TOP_K = 10000
-MAX_DRAW = 20  # safety cap; assert below if filtered count ever exceeds this
+MAX_DRAW = 20  # safety cap; assert below if survivor count ever exceeds this
 N_COLS = 6     # grid is 6 wide on A4 portrait; rows scale with count
 DPI_OUT = 200
+
+
+def _fmt_pct(w):
+    """Compact percentage for tiny support weights."""
+    if w >= 5e-4:
+        return f"{w:.2%}"
+    return "<0.05%"
 
 
 def main():
     edge_prob = compute_edge_supports()
     G = build_graph(edge_prob)
-
-    paths_per_term = all_paths_per_terminal(G)
-    combos, terms = top_k_combinations(paths_per_term, TOP_K)
-
-    print("=== Edge-condition check ===")
-    print(f"  G has {G.number_of_nodes()} nodes, {G.number_of_edges()} edges.")
-    print(f"  All paths from nx.all_simple_paths — guaranteed valid edges.")
     clones_df = load_clone_regions()
-    print(f"  Loaded {len(clones_df)} clones for size annotation.")
+    print(f"Loaded {len(clones_df)} clones for size annotation.")
 
-    by_sig = defaultdict(list)
-    sig_to_seq = {}
-    for idx, lp in combos:
-        combo_paths = {t: paths_per_term[t][idx[k]][0]
-                       for k, t in enumerate(terms)}
-        seq = derive_restriction_sequence(combo_paths)
-        sig = signature(seq)
-        by_sig[sig].append({"idx": idx, "lp": lp})
-        if sig not in sig_to_seq:
-            sig_to_seq[sig] = seq
+    print("\nEnumerating the FULL combination space (no top-K cutoff) ...")
+    res = enumerate_full_space(G, clones_df, progress=True)
+    terms = res["terms"]
+    survivors = res["survivors"]
+    f = res["funnel"]
 
-    sigs_sorted = sorted(by_sig.keys(),
-                         key=lambda s: -max(m["lp"] for m in by_sig[s]))
-    sigs_bif = [s for s in sigs_sorted
-                if _is_strictly_bifurcating(_build_children(sig_to_seq[s]))]
-    sigs_supp = [
-        s for s in sigs_bif
-        if _all_internal_nodes_supported(
-            _build_children(sig_to_seq[s]),
-            frozenset(sig_to_seq[s][0]["fates_before_split"]),
-            clones_df,
-        )
-    ]
-    sigs_filtered = [
-        s for s in sigs_supp
-        if _is_median_monotonic(
-            _build_children(sig_to_seq[s]),
-            frozenset(sig_to_seq[s][0]["fates_before_split"]),
-            clones_df,
-        )
-    ]
-    print(f"\n{len(sigs_sorted)} distinct signatures →")
-    print(f"  {len(sigs_bif)} strictly bifurcating →")
-    print(f"  {len(sigs_supp)} with every bifurcation supported (n>0) →")
-    print(f"  {len(sigs_filtered)} with monotone median clone size.")
+    print(f"\n=== Funnel over ALL {res['total']:,} combinations ===")
+    print(f"  {f['distinct']:>4} distinct topologies (any shape)")
+    print(f"  {f['bifurcating']:>4} strictly bifurcating "
+          f"(support weight {res['weight_binary']:.2%})")
+    print(f"  {f['supported']:>4} + every bifurcation clone-supported "
+          f"(support weight {res['weight_supported']:.2%})")
+    print(f"  {f['monotone']:>4} + monotone median clone size "
+          f"(support weight {res['weight_monotone']:.2%})  <- drawn")
+    print(f"\n  Top-5 of the drawn set carry {res['weight_top5']:.2%} of total support.")
+    print(f"  Strictly-bifurcating trees carry only "
+          f"{res['weight_binary']:.2%} of total support; the remaining "
+          f"{1 - res['weight_binary']:.1%} sits on MULTIFURCATING topologies.")
+    print(f"  The single most-probable reconstruction (MAP) is "
+          f"{'a binary tree.' if res['map_is_binary'] else 'MULTIFURCATING (not a binary tree).'}")
 
-    assert len(sigs_filtered) <= MAX_DRAW, (
-        f"{len(sigs_filtered)} signatures pass all filters but layout caps at "
-        f"{MAX_DRAW}. Either widen the cap or tighten the filters."
+    n_show = len(survivors)
+    assert n_show <= MAX_DRAW, (
+        f"{n_show} survivors but layout caps at {MAX_DRAW}. Either widen "
+        f"the cap (and re-check the grid) or tighten the filters."
     )
-    n_show = len(sigs_filtered)
-    top_sigs = sigs_filtered
-    n_paths = {t: len(paths_per_term[t]) for t in terms}
 
-    # Layout: pack the panels into a roughly-square grid, never wider than
-    # N_COLS. For small counts (≤ N_COLS) we use a single row.
+    lp_top = survivors[0]["best_lp"]
+
+    # Layout: pack panels into a roughly-square grid, never wider than N_COLS.
     if n_show <= N_COLS:
         n_cols, n_rows = n_show, 1
     else:
         n_cols, n_rows = N_COLS, math.ceil(n_show / N_COLS)
-    panel_w = 9.5 / N_COLS  # keep per-panel width consistent with prior 12-panel layout
+    panel_w = 9.5 / N_COLS
     fig_w = max(4.5, panel_w * n_cols)
-    # Single-row figures need extra vertical room so the legend below doesn't
-    # collide with the bottom-row terminal labels.
-    fig_h = 1.8 * n_rows + (1.4 if n_rows == 1 else 0.7)
+    fig_h = 1.95 * n_rows + (1.4 if n_rows == 1 else 1.8)
     fig, axes = plt.subplots(n_rows, n_cols,
                              figsize=(fig_w, fig_h), dpi=DPI_OUT)
     axes_flat = np.atleast_1d(axes).flatten()
 
-    for i, sig in enumerate(top_sigs):
+    for i, e in enumerate(survivors):
         ax = axes_flat[i]
-        members = sorted(by_sig[sig], key=lambda m: -m["lp"])
-        rep = members[0]
-        rep_idx = rep["idx"]
+        seq = derive_restriction_sequence(e["combo_paths"])
+        draw_clado(ax, seq, title="", n_combos=1, log_p=e["best_lp"],
+                   margin=1.0, clones_df=clones_df)
+        rel = math.exp(e["best_lp"] - lp_top)  # likelihood relative to top
+        ax.text(0.5, 1.005, f"S{i + 1}",
+                ha="center", va="bottom", fontsize=8, fontweight="bold",
+                transform=ax.transAxes, color="#333333")
+        ax.text(0.5, 0.995, f"L={rel:.2f}  w={_fmt_pct(e['weight'])}",
+                ha="center", va="top", fontsize=5.5,
+                transform=ax.transAxes, color="#888888")
 
-        margins = []
-        for k, t in enumerate(terms):
-            i_path = rep_idx[k]
-            p_here = paths_per_term[t][i_path][1]
-            p_next = (paths_per_term[t][i_path + 1][1]
-                      if i_path + 1 < n_paths[t] else 0.0)
-            if p_next > 0:
-                margins.append(p_here / p_next)
-        margin_med = float(np.median(margins)) if margins else 1.0
-
-        sig_id = f"S{i + 1}"
-        ranks_str = ", ".join(
-            f"{terms[k]}:{rep_idx[k] + 1}" for k in range(len(terms)))
-        title = f"{sig_id}   {ranks_str}"
-        draw_clado(ax, sig_to_seq[sig], title=title,
-                   n_combos=len(members), log_p=rep["lp"],
-                   margin=margin_med, clones_df=clones_df)
-
-    # Hide unused axes in the last row
     for ax in axes_flat[n_show:]:
         ax.axis("off")
 
     fig.suptitle(
-        f"All {n_show} biologically-plausible restriction-sequence topologies\n"
-        "(strictly bifurcating, every bifurcation clone-supported, "
-        "monotone median clone size)",
-        fontsize=10, fontweight="bold", y=1.0,
+        f"All {n_show} biologically-plausible binary restriction-sequence "
+        f"topologies (of {res['total']:,} path combinations)\n"
+        f"strictly bifurcating · every bifurcation clone-supported · "
+        f"monotone median clone size — yet all binary trees together carry "
+        f"only {res['weight_binary']:.1%} of total support\n"
+        f"(L = likelihood relative to top tree; w = marginal support weight)",
+        fontsize=9, fontweight="bold", y=1.0,
     )
-    # Legend matching restriction_cladogram.py for visual continuity.
-    from _topology_utils import (
-        CLUSTER_PALETTE, ARC_COLOR,
-    )
+
     import matplotlib.patches as mpatches
     from matplotlib.lines import Line2D
     legend_handles = [
@@ -176,15 +143,14 @@ def main():
                label="Bifurcation node  (label = median clone size)"),
     ]
     legend_y = 0.04 if n_rows == 1 else 0.02
-    rect_bottom = 0.20 if n_rows == 1 else 0.05
+    rect_bottom = 0.20 if n_rows == 1 else 0.13
     fig.legend(handles=legend_handles, loc="lower center",
                bbox_to_anchor=(0.5, legend_y), ncol=3,
                fontsize=7, frameon=False, handletextpad=0.5,
                columnspacing=1.6, labelspacing=0.4)
-    plt.tight_layout(pad=0.6, rect=(0, rect_bottom, 1, 0.92))
+    plt.tight_layout(pad=0.6, rect=(0, rect_bottom, 1, 0.90))
     os.makedirs(os.path.dirname(OUT_PNG), exist_ok=True)
-    plt.savefig(OUT_PNG, dpi=DPI_OUT, bbox_inches="tight",
-                facecolor="white")
+    plt.savefig(OUT_PNG, dpi=DPI_OUT, bbox_inches="tight", facecolor="white")
     plt.close()
     print(f"\n✓ Saved: {OUT_PNG}")
 

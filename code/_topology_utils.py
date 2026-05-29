@@ -24,9 +24,12 @@ Imported by Figure4a.py (5-topology overview), SuppFigure2.py
 """
 
 import heapq
+import math
 import os
 import sys
+import time
 from collections import defaultdict
+from itertools import product
 
 import matplotlib
 matplotlib.use("Agg")
@@ -211,6 +214,171 @@ def top_k_combinations(paths_per_term, K):
             visited.add(new_t)
             heapq.heappush(heap, (-lp(new_t), new_t))
     return out, terms
+
+
+def fast_signature(paths):
+    """Canonical topology signature from a list of node-paths (one per
+    fate, indexed by fate-id 0..n-1). Equivalent to
+    signature(derive_restriction_sequence(...)) up to the fixed
+    fate-id<->fate-name relabeling, which preserves set equality, so it is
+    a faithful key for de-duplicating topologies across the full
+    combination space. Returns a frozenset of (frozenset(parent fate-ids),
+    frozenset(child fate-id sets)) split events.
+
+    This is the cheap inner loop used by enumerate_full_space; it avoids
+    building the verbose restriction-sequence records for all 21M combos."""
+    steps = []
+
+    def recurse(fates, depth):
+        groups = {}
+        for f in fates:
+            p = paths[f]
+            key = p[depth] if depth < len(p) else ("LEAF", f)
+            g = groups.get(key)
+            if g is None:
+                groups[key] = [f]
+            else:
+                g.append(f)
+        if len(groups) == 1:
+            only = next(iter(groups.values()))
+            if len(only) > 1:
+                recurse(only, depth + 1)
+            return
+        steps.append((frozenset(fates),
+                      frozenset(frozenset(g) for g in groups.values())))
+        for g in groups.values():
+            if len(g) > 1:
+                recurse(g, depth + 1)
+
+    recurse(list(range(len(paths))), 0)
+    return frozenset(steps)
+
+
+def enumerate_full_space(G, clones_df, progress=False):
+    """Exhaustively score EVERY root->terminal path combination across the
+    six terminals (no top-K cutoff) and return the topologies that pass the
+    biological filters, together with the marginal-support weight each one
+    carries.
+
+    Rationale: the three biological filters (strict bifurcation, every
+    bifurcation clone-supported, monotone median clone size) depend only on
+    the TOPOLOGY, not on the joint score. A topology can therefore pass the
+    filters yet first appear far below any top-K search cutoff, so a top-K
+    scan under-counts the surviving topologies. This function removes that
+    artefact by visiting the entire space.
+
+    The 'support weight' of a topology is sum(exp(joint log-score)) over all
+    combinations realizing it, divided by that sum over the whole space —
+    i.e. its marginal posterior weight under the per-terminal-independent
+    path model. (Path scores are edge-support products, not strict
+    probabilities; see _graph_utils — so this is a relative support measure,
+    not a calibrated probability.)
+
+    Returns a dict:
+      terms              : sorted terminal-fate labels (fate-id order)
+      total              : total number of combinations scanned
+      funnel             : {distinct, bifurcating, supported, monotone}
+      survivors          : list (sorted by best_lp desc) of topologies
+                           passing ALL filters; each is a dict with
+                           sig, combo_paths (best realization, for drawing),
+                           best_idx, best_lp, weight, combo_rank
+      supported          : same, for the filter set with median DROPPED
+                           (bifurcating + every node supported)
+      weight_binary      : collective support weight of all bifurcating topos
+      weight_supported   : ... of the clone-supported set
+      weight_monotone    : ... of the full-filter (drawn) set
+      weight_top5        : ... of the 5 highest-best_lp survivors
+      map_is_binary      : whether the single highest-scoring combination
+                           (the MAP reconstruction) is itself a binary tree
+    """
+    ppt = all_paths_per_terminal(G)
+    terms = sorted(ppt.keys())
+    node_paths_t = [[tuple(p) for p, _ in ppt[t]] for t in terms]
+    logsc_t = [np.array([np.log(max(s, 1e-30)) for _, s in ppt[t]],
+                        dtype=np.float64) for t in terms]
+    ranges = [len(x) for x in node_paths_t]
+    total = int(np.prod(ranges))
+
+    all_lp = np.empty(total, dtype=np.float64)
+    best = {}   # sig -> (best_lp, best_idx)
+    mass = {}   # sig -> sum exp(lp) over its combos (bifurcating only)
+    distinct = set()
+    map_lp = -np.inf
+    map_sig = None
+    l0, l1, l2, l3, l4, l5 = logsc_t
+    np0, np1, np2, np3, np4, np5 = node_paths_t
+
+    t0 = time.time()
+    c = 0
+    for i0, i1, i2, i3, i4, i5 in product(
+            range(ranges[0]), range(ranges[1]), range(ranges[2]),
+            range(ranges[3]), range(ranges[4]), range(ranges[5])):
+        lp = l0[i0] + l1[i1] + l2[i2] + l3[i3] + l4[i4] + l5[i5]
+        all_lp[c] = lp
+        sig = fast_signature(
+            [np0[i0], np1[i1], np2[i2], np3[i3], np4[i4], np5[i5]])
+        distinct.add(hash(sig))
+        if lp > map_lp:
+            map_lp, map_sig = lp, sig
+        if all(len(child) == 2 for _, child in sig):
+            prev = best.get(sig)
+            if prev is None or lp > prev[0]:
+                best[sig] = (lp, (i0, i1, i2, i3, i4, i5))
+            mass[sig] = mass.get(sig, 0.0) + math.exp(lp)
+        c += 1
+        if progress and c % 2_000_000 == 0:
+            print(f"    {c:,}/{total:,} ({100*c/total:4.1f}%) "
+                  f"{time.time()-t0:5.1f}s")
+
+    total_mass = float(np.exp(all_lp).sum())
+    asc = np.sort(all_lp)
+
+    def make_entry(sig, lp, idx):
+        combo_paths = {terms[k]: list(node_paths_t[k][idx[k]])
+                       for k in range(len(terms))}
+        return {
+            "sig": sig,
+            "combo_paths": combo_paths,
+            "best_idx": idx,
+            "best_lp": lp,
+            "weight": mass[sig] / total_mass,
+            "combo_rank": total - int(np.searchsorted(asc, lp, "right")) + 1,
+        }
+
+    supported, survivors = [], []
+    for sig, (lp, idx) in best.items():
+        entry = make_entry(sig, lp, idx)
+        seq = derive_restriction_sequence(entry["combo_paths"])
+        children_of = _build_children(seq)
+        root = frozenset(seq[0]["fates_before_split"])
+        if not _is_strictly_bifurcating(children_of):
+            continue  # should already hold; structural guard
+        if not _all_internal_nodes_supported(children_of, root, clones_df):
+            continue
+        supported.append(entry)
+        if _is_median_monotonic(children_of, root, clones_df):
+            survivors.append(entry)
+
+    supported.sort(key=lambda e: -e["best_lp"])
+    survivors.sort(key=lambda e: -e["best_lp"])
+
+    return {
+        "terms": terms,
+        "total": total,
+        "funnel": {
+            "distinct": len(distinct),
+            "bifurcating": len(best),
+            "supported": len(supported),
+            "monotone": len(survivors),
+        },
+        "survivors": survivors,
+        "supported": supported,
+        "weight_binary": sum(mass.values()) / total_mass,
+        "weight_supported": sum(e["weight"] for e in supported),
+        "weight_monotone": sum(e["weight"] for e in survivors),
+        "weight_top5": sum(e["weight"] for e in survivors[:5]),
+        "map_is_binary": all(len(child) == 2 for _, child in map_sig),
+    }
 
 
 def _build_children(sequence):
