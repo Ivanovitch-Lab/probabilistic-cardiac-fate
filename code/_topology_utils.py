@@ -527,11 +527,17 @@ def _layout(children_of, root):
 
 
 def draw_clado(ax, sequence, title, n_combos, log_p, margin,
-               clones_df=None):
+               clones_df=None, cooccurrence_sisters_only=False):
     """Draw one cladogram in restriction_cladogram.py style. If clones_df
     is provided, annotate each internal node with its median clone size
     (clones spanning that bifurcation) and each leaf with its single-fate
-    median clone size."""
+    median clone size.
+
+    cooccurrence_sisters_only: if True, an FDR co-occurrence arc is drawn
+    only when its two fates are direct sister leaves in THIS topology
+    (i.e. frozenset({f1, f2}) is a bifurcation node). Default False keeps
+    the original behaviour (arc drawn whenever both leaves are present),
+    so manuscript figures are unaffected."""
     children_of = _build_children(sequence)
     if not children_of:
         ax.axis("off")
@@ -604,6 +610,9 @@ def draw_clado(ax, sequence, title, n_combos, log_p, margin,
     # Same neutral dark-grey arc styling as restriction_cladogram.py.
     for f1, f2 in COOCCURRENCE_PAIRS:
         if f1 in leaf_x and f2 in leaf_x:
+            if cooccurrence_sisters_only and \
+                    frozenset({f1, f2}) not in children_of:
+                continue
             ax.add_patch(FancyArrowPatch(
                 posA=(leaf_x[f1], leaf_y),
                 posB=(leaf_x[f2], leaf_y),
