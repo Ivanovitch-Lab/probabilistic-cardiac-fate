@@ -104,7 +104,8 @@ def main():
         ax = axes_flat[i]
         seq = derive_restriction_sequence(e["combo_paths"])
         draw_clado(ax, seq, title="", n_combos=1, log_p=e["best_lp"],
-                   margin=1.0, clones_df=clones_df)
+                   margin=1.0, clones_df=clones_df,
+                   cooccurrence_sisters_only=True)
         rel = math.exp(e["best_lp"] - lp_top)  # likelihood relative to top
         ax.text(0.5, 1.005, f"S{i + 1}",
                 ha="center", va="bottom", fontsize=8, fontweight="bold",
@@ -136,7 +137,7 @@ def main():
         mpatches.Patch(facecolor=CLUSTER_PALETTE[1], edgecolor="white",
                        linewidth=1, label="OFT / Atria"),
         Line2D([0], [0], color=ARC_COLOR, lw=1.5, alpha=0.85,
-               label="Significant co-occurrence  (FDR < 0.05)"),
+               label="Significant co-occurrence (FDR < 0.05) — sister leaves"),
         Line2D([0], [0], marker="o", color="w",
                markerfacecolor="#DDDDDD", markeredgecolor="#BBBBBB",
                markersize=7,
