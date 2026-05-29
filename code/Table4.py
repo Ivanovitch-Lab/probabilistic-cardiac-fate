@@ -18,7 +18,7 @@ One row per topology. Columns:
   - log score            natural-log joint score of the topology
   - Rel. score           joint score as % of the best topology
   - support              marginal support weight (sum of exp(joint score)
-                         over all combos realizing it / over all combos)
+                         over all combos realising it / over all combos)
   - per-terminal margin  median across the six terminals of
                          score(chosen path) / score(next-ranked path)
   - Δ next topology      ratio of this topology's joint score to the

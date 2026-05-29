@@ -220,7 +220,7 @@ def fast_signature(paths):
     """Canonical topology signature from a list of node-paths (one per
     fate, indexed by fate-id 0..n-1). Equivalent to
     signature(derive_restriction_sequence(...)) up to the fixed
-    fate-id<->fate-name relabeling, which preserves set equality, so it is
+    fate-id<->fate-name relabelling, which preserves set equality, so it is
     a faithful key for de-duplicating topologies across the full
     combination space. Returns a frozenset of (frozenset(parent fate-ids),
     frozenset(child fate-id sets)) split events.
@@ -268,7 +268,7 @@ def enumerate_full_space(G, clones_df, progress=False):
     artefact by visiting the entire space.
 
     The 'support weight' of a topology is sum(exp(joint log-score)) over all
-    combinations realizing it, divided by that sum over the whole space —
+    combinations realising it, divided by that sum over the whole space —
     i.e. its marginal posterior weight under the per-terminal-independent
     path model. (Path scores are edge-support products, not strict
     probabilities; see _graph_utils — so this is a relative support measure,
@@ -280,7 +280,7 @@ def enumerate_full_space(G, clones_df, progress=False):
       funnel             : {distinct, bifurcating, supported, monotone}
       survivors          : list (sorted by best_lp desc) of topologies
                            passing ALL filters; each is a dict with
-                           sig, combo_paths (best realization, for drawing),
+                           sig, combo_paths (best realisation, for drawing),
                            best_idx, best_lp, weight, n_combos, combo_rank
       supported          : same, for the filter set with median DROPPED
                            (bifurcating + every node supported)

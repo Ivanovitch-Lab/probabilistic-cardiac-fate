@@ -15,9 +15,9 @@ to binary and multifurcating alike, for a fair comparison), and plots each
 surviving topology along ONE plausibility axis, Figure-3d style, coloured
 by class:
 
-  best-realization score, relative to overall best
+  best-realisation score, relative to overall best
     For each topology T:
-        best_realization(T) = score(T) / score_overall_best
+        best_realisation(T) = score(T) / score_overall_best
     where
         score(T)            = joint score of the SINGLE BEST 6-path
                               combination that produces topology T
@@ -29,7 +29,7 @@ by class:
        fate-partition tree); score(T) keeps only the best-scoring one of
        those — hence "single best path-combination producing the tree."
 
-  By construction the global-best combination has best_realization = 1.0;
+  By construction the global-best combination has best_realisation = 1.0;
   every other topology sits between 0 and 1. The global best is a binary
   tree (so binary reaches 1.0); the best multifurcating topology comes
   essentially to the same point — they're effectively tied at the top.
@@ -168,7 +168,7 @@ def main():
     ax.set_ylim(-0.55, 1.55)
     ax.set_xlim(0, 1.06)
     ax.set_xlabel(
-        "best-realization score\n(relative to overall best = 1.0)",
+        "best-realisation score\n(relative to overall best = 1.0)",
         fontsize=6)
     ax.tick_params(axis="x", labelsize=5, pad=1.5, length=2.5, width=0.5)
     ax.tick_params(axis="y", length=0, pad=2)
