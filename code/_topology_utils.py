@@ -164,7 +164,7 @@ INT_R    = 0.036
 LINE_COL = "#BBBBBB"
 LINE_LW  = 1.4
 
-# Co-occurrence pairs that pass FDR ≤ 0.05 (Sox2-Cre, small-clone bin),
+# Co-occurrence pairs that pass FDR ≤ 0.05 (small-clone bin),
 # from cooccurrence_fdr_table.txt — drawn as arcs under the matching
 # sister leaves in each cladogram (matches restriction_cladogram.py).
 COOCCURRENCE_PAIRS = [
