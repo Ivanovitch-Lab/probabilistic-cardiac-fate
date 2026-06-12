@@ -165,7 +165,6 @@ LINE_COL = "#BBBBBB"
 LINE_LW  = 1.4
 
 # Co-occurrence pairs that pass FDR ≤ 0.05 (small-clone bin),
-# from cooccurrence_fdr_table.txt — drawn as arcs under the matching
 # sister leaves in each cladogram (matches restriction_cladogram.py).
 COOCCURRENCE_PAIRS = [
     ("AB", "AVC"),     # z=4.96, FDR=1.1×10⁻⁵
