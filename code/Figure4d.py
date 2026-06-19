@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 """
-Figure4c.py
+Figure4d.py
 
-Vertical cladogram of the rank-1 plausible restriction sequence — the
-highest-joint-score topology among the candidate restriction sequences
-that pass the three biological filters (strictly bifurcating, every
-bifurcation clone-supported, monotone median clone size).
+Vertical cladogram of the rank-3 plausible restriction sequence — the
+third-highest-joint-score topology among the candidate restriction
+sequences that pass the three biological filters (strictly bifurcating,
+every bifurcation clone-supported, monotone median clone size).
 
 Root at TOP (multi-potent epiblast progenitor), terminal fates at BOTTOM —
-matching the orientation of the main hierarchy network figure (Figure 3c).
+same orientation as Figure 4c (rank-1 plausible cladogram).
+
+The Rank-3 topology differs from Rank 1 in where LV branches: here LV
+groups with the OFT–RV (right-ventricular) pole rather than with the
+AB–AVC–Atria (junctional) pole. The two FDR-significant sister pairs
+(AB–AVC, OFT–RV) are preserved.
 
 Restriction sequence (top → bottom):
-  1. Proximal | Distal                          (first split)
-  2. LV separates from the proximal pool        (earliest committed fate)
-  3. Atria separates from the junctional pool
-  4. AB | AVC   and   RV | OFT                  (final fate commitment)
+  1. {AB,AVC,Atria}  |  {LV,OFT,RV}            (first split)
+  2. {AB,AVC} | Atria   AND   LV | {OFT,RV}     (second split)
+  3. AB | AVC          AND   OFT | RV           (final fate commitment)
 
-Significant Small-clone co-occurrences (FDR < 0.05) shown as arcs below
-the terminal nodes — both significant pairs (AB–AVC, OFT–RV) sit within
-their respective clades as direct sister leaves.
-
-Output: ../figures/Figure4c.png
+Output: ../figures/Figure4d.png
 """
 
 import os
@@ -34,7 +34,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import FancyArrowPatch
 
 _HERE   = os.path.dirname(os.path.abspath(__file__))
-OUT_PNG = os.path.join(_HERE, "..", "figures", "Figure4c.png")
+OUT_PNG = os.path.join(_HERE, "..", "figures", "Figure4d.png")
 
 CLUSTER_PALETTE = {
     1: "#CC79A7",
@@ -43,33 +43,39 @@ CLUSTER_PALETTE = {
 }
 
 # ── Leaf positions  (x = horizontal fate layout, y fixed at bottom) ───────────
-# Order left→right mirrors original cladogram y-positions (Atria→OFT)
+# Leaf order left→right: junctional clade first (Atria, AB, AVC),
+# then right-ventricular clade (LV, RV, OFT). AB-AVC and RV-OFT stay
+# adjacent so the FDR-significant arcs sit between sisters.
 LEAVES = {
     "Atria": dict(x=0.08, y=0.14, cluster=1, median=8),
-    "AB":    dict(x=0.24, y=0.14, cluster=2, median=4),
-    "AVC":   dict(x=0.40, y=0.14, cluster=2, median=6),
-    "LV":    dict(x=0.56, y=0.14, cluster=3, median=8),
+    "AB":    dict(x=0.22, y=0.14, cluster=2, median=4),
+    "AVC":   dict(x=0.36, y=0.14, cluster=2, median=6),
+    "LV":    dict(x=0.55, y=0.14, cluster=3, median=8),
     "RV":    dict(x=0.74, y=0.14, cluster=3, median=5),
     "OFT":   dict(x=0.88, y=0.14, cluster=1, median=6),
 }
 
 # ── Internal nodes  (x = midpoint of children, y = restriction depth) ─────────
-# y: higher = earlier restriction (root at top)
+# y is set to match Figure 4c's restriction-depth scale, so the two
+# cladograms can sit side-by-side with bifurcation nodes at directly
+# comparable y-positions (root y=0.90, mid level y=0.56, late level y=0.38).
+# N_RIGHT (median=24) sits between Fig 4c's N_PROX (38, y=0.74) and
+# N_PROX2 (20, y=0.56) at y=0.65.
 NODES = {
-    "N_JUNC":  dict(x=0.32, y=0.38),   # AB | AVC
-    "N_DIST":  dict(x=0.81, y=0.38),   # RV | OFT
-    "N_PROX2": dict(x=0.20, y=0.56),   # Atria | (AB+AVC)
-    "N_PROX":  dict(x=0.38, y=0.74),   # (AB+AVC+Atria) | LV
-    "Root":    dict(x=0.60, y=0.90),   # Proximal | Distal
+    "N_JUNC":  dict(x=0.29,  y=0.38),   # AB | AVC                    (median 14)
+    "N_DIST":  dict(x=0.81,  y=0.38),   # OFT | RV                    (median 18)
+    "N_LEFT":  dict(x=0.185, y=0.56),   # (AB+AVC) | Atria            (median 20)
+    "N_RIGHT": dict(x=0.68,  y=0.65),   # LV | (OFT+RV)               (median 24)
+    "Root":    dict(x=0.43,  y=0.90),   # left clade | right clade    (median 85)
 }
 
 # Tree topology: c1=left child, c2=right child
 TREE = {
-    "Root":    dict(c1="N_PROX",  c2="N_DIST"),
-    "N_DIST":  dict(c1="RV",      c2="OFT"),
-    "N_PROX":  dict(c1="N_PROX2", c2="LV"),
-    "N_PROX2": dict(c1="Atria",   c2="N_JUNC"),
+    "Root":    dict(c1="N_LEFT",  c2="N_RIGHT"),
+    "N_LEFT":  dict(c1="N_JUNC",  c2="Atria"),
     "N_JUNC":  dict(c1="AB",      c2="AVC"),
+    "N_RIGHT": dict(c1="LV",      c2="N_DIST"),
+    "N_DIST":  dict(c1="RV",      c2="OFT"),
 }
 
 NODE_R   = 0.058
@@ -79,17 +85,17 @@ LINE_LW  = 1.4
 
 # ── Median clone size at each bifurcation node ──
 # Strictly hierarchical: each node uses ONLY clones within its own subtree.
-# Root:    5- and 6-fate clones (n=5, most multipotent)         → 85 cells
-# N_PROX:  LV + any proximal, no distal (n=6)                  → 38 cells
-# N_PROX2: (AB or AVC) + Atria, no LV, no distal (n=5)         → 20 cells
-# N_JUNC:  pure AB+AVC clones (n=4)                            → 14 cells
-# N_DIST:  pure RV+OFT clones (n=10)                           → 18 cells
+# Root:    5- and 6-fate clones (n=5, most multipotent)                → 85 cells
+# N_LEFT:  Atria + (AB or AVC), no LV/OFT/RV (n=5)                     → 20 cells
+# N_JUNC:  pure AB+AVC clones (n=4)                                    → 14 cells
+# N_RIGHT: LV + (OFT or RV), no AB/AVC/Atria (n=3)                     → 24 cells
+# N_DIST:  pure OFT+RV clones (n=10)                                   → 18 cells
 NODE_CLONE_DATA = {
-    "Root":    dict(median=85,  n=5),
-    "N_PROX":  dict(median=38,  n=6),
-    "N_PROX2": dict(median=20,  n=5),
-    "N_JUNC":  dict(median=14,  n=4),
-    "N_DIST":  dict(median=18,  n=10),
+    "Root":    dict(median=85, n=5),
+    "N_LEFT":  dict(median=20, n=5),
+    "N_JUNC":  dict(median=14, n=4),
+    "N_RIGHT": dict(median=24, n=3),
+    "N_DIST":  dict(median=18, n=10),
 }
 
 
@@ -97,6 +103,7 @@ COOCCURRENCES = [
     dict(pair=("AB",  "AVC"), z=4.96, fdr="1.1×10⁻⁵", rad=-0.80),
     dict(pair=("RV",  "OFT"), z=4.38, fdr="8.9×10⁻⁵", rad=-0.80),
 ]
+
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def _pos(name):
@@ -117,10 +124,8 @@ def _draw_tree(ax, name):
 
     x_lo, x_hi = min(xC1, xC2), max(xC1, xC2)
 
-    # Horizontal crossbar
     ax.plot([x_lo, x_hi], [yN, yN], color=LINE_COL, lw=LINE_LW,
             solid_capstyle="round", zorder=1)
-    # Vertical drops to each child
     for xC, yC in [(xC1, yC1), (xC2, yC2)]:
         ax.plot([xC, xC], [yN, yC], color=LINE_COL, lw=LINE_LW,
                 solid_capstyle="round", zorder=1)
@@ -130,37 +135,38 @@ def _draw_tree(ax, name):
 
 
 def main() -> None:
-    # Half-A4 width (~105 mm) to sit beside the k3 hierarchy backbone figure.
     fig, ax = plt.subplots(figsize=(4.13, 4.5), dpi=300)
     ax.set_xlim(-0.28, 1.08)
-    # Lower bound just past the cell-count labels — no wasted vertical space
-    # so the legend can sit close beneath the cladogram with a small gap.
     ax.set_ylim(-0.04, 1.02)
     ax.set_aspect("equal")
     ax.axis("off")
 
-    # ── Background zones ───────────────────────────────────────────────────────
-    # Proximal (left): Atria, AB, AVC, LV
+    # ── Background zones (no big "PROXIMAL/DISTAL" labels — the Rank-3
+    #    split groups LV with the OFT/RV clade, which is not the standard
+    #    proximal/distal anatomical division). Vertical extent matches
+    #    Figure 4c so the two panels read at the same depth scale. ──────────
+    # Left clade: Atria, AB, AVC
     ax.add_patch(mpatches.FancyBboxPatch(
-        (-0.06, 0.02), 0.70, 0.95,
+        (-0.06, 0.02), 0.50, 0.95,
         boxstyle="round,pad=0.005",
         facecolor="#F8F8F8", edgecolor="none", alpha=0.85, zorder=0))
-    # Distal (right): RV, OFT
+    # Right clade: LV, RV, OFT
     ax.add_patch(mpatches.FancyBboxPatch(
-        (0.66, 0.02), 0.38, 0.95,
+        (0.46, 0.02), 0.58, 0.95,
         boxstyle="round,pad=0.005",
         facecolor="#EEEEFF", edgecolor="none", alpha=0.85, zorder=0))
-    # Boundary dashed line — clipped to the background zone (data coords)
-    ax.plot([0.65, 0.65], [0.02, 0.97], color="#CCCCDD",
+    # Boundary dashed line
+    ax.plot([0.45, 0.45], [0.02, 0.97], color="#CCCCDD",
             lw=0.8, linestyle="--", zorder=0)
 
-    # Zone labels (top)
-    ax.text(0.30, 0.99, "PROXIMAL", ha="center", va="bottom",
+    # Zone labels — identical style/colors to Figure 4c (PROXIMAL/DISTAL),
+    # just shifted to the Rank-3 clade midpoints.
+    ax.text(0.19, 0.99, "PROXIMAL", ha="center", va="bottom",
             fontsize=9, fontweight="bold", color="#777777")
-    ax.text(0.80, 0.99, "DISTAL",   ha="center", va="bottom",
+    ax.text(0.72, 0.99, "DISTAL",   ha="center", va="bottom",
             fontsize=9, fontweight="bold", color="#7777AA")
 
-    # ── Restriction arrow (labelled "Restriction sequence") ───────────────────
+    # ── Restriction arrow ────────────────────────────────────────────────────
     ax.annotate("", xy=(-0.10, 0.12), xytext=(-0.10, 0.92),
                 arrowprops=dict(arrowstyle="-|>", color="#AAAAAA", lw=1.0))
     ax.text(-0.13, 0.52, "Restriction sequence",
@@ -168,8 +174,6 @@ def main() -> None:
             color="#888888", rotation=90)
 
     # ── Clone-size / stage gradient bar ──────────────────────────────────────
-    # Warm (large clones, epiblast) at top → cool (small clones, mesoderm) at bottom.
-    # Gradient fades through the transition zone (N_PROX 38 cells ↔ N_PROX2 20 cells).
     c_top = np.array([250, 190, 130]) / 255   # warm orange
     c_bot = np.array([140, 190, 240]) / 255   # cool blue
     bx0, bx1 = -0.27, -0.255
@@ -184,12 +188,12 @@ def main() -> None:
             (bx0, y0), bx1 - bx0, y1 - y0,
             facecolor=c, edgecolor="none", alpha=0.60, zorder=0))
 
-    # Dashed lines bracketing the transition zone (between N_PROX y=0.74 and N_PROX2 y=0.56)
+    # Bracket the transition zone — same y as Figure 4c (between
+    # N_PROX y=0.74 and N_PROX2 y=0.56) so the gradient bars align.
     for y_dash in [0.74, 0.56]:
         ax.plot([bx0 - 0.005, bx1 + 0.005], [y_dash, y_dash],
                 color="#BBBBBB", lw=0.6, linestyle="--", zorder=1)
 
-    # Zone labels
     ax.text((bx0 + bx1) / 2, by_top + 0.01, "Large clones",
             ha="center", va="bottom", fontsize=6.5, color="#B8602A",
             fontweight="bold")
@@ -197,13 +201,10 @@ def main() -> None:
             ha="center", va="top", fontsize=6.5, color="#2A6AB8",
             fontweight="bold")
 
-    # ── Cladogram lines ────────────────────────────────────────────────────────
+    # ── Cladogram lines ──────────────────────────────────────────────────────
     _draw_tree(ax, "Root")
 
-    # ── Co-occurrence arcs (below leaf row) ────────────────────────────────────
-    # Neutral dark-grey arcs: the signal here is statistical (FDR<0.05),
-    # independent of cluster identity, so a neutral colour avoids implying
-    # the arc itself carries cluster meaning.
+    # ── Co-occurrence arcs (below leaf row) ──────────────────────────────────
     arc_color = "#333333"
     for cooc in COOCCURRENCES:
         n1, n2 = cooc["pair"]
@@ -216,7 +217,7 @@ def main() -> None:
             color=arc_color, linewidth=1.5, alpha=0.85, zorder=3,
         ))
 
-    # ── Internal nodes ─────────────────────────────────────────────────────────
+    # ── Internal nodes ───────────────────────────────────────────────────────
     for name, node in NODES.items():
         if name == "Root":
             continue
@@ -228,7 +229,7 @@ def main() -> None:
                 ha="center", va="top", fontsize=6.5, fontweight="bold",
                 color="#777777", zorder=5)
 
-    # ── Leaf nodes ─────────────────────────────────────────────────────────────
+    # ── Leaf nodes ───────────────────────────────────────────────────────────
     for name, leaf in LEAVES.items():
         x, y = leaf["x"], leaf["y"]
         color = CLUSTER_PALETTE[leaf["cluster"]]
@@ -241,7 +242,7 @@ def main() -> None:
                 ha="center", va="top", fontsize=5.5, fontweight="bold",
                 color="#777777", zorder=5)
 
-    # ── Root node ──────────────────────────────────────────────────────────────
+    # ── Root node ────────────────────────────────────────────────────────────
     rx, ry = NODES["Root"]["x"], NODES["Root"]["y"]
     ax.add_patch(plt.Circle((rx, ry), INT_R,
         facecolor="#AAAAAA", edgecolor="white",
@@ -253,7 +254,7 @@ def main() -> None:
             ha="center", va="top", fontsize=6.5, fontweight="bold",
             color="#777777", zorder=5)
 
-    # ── Legend ─────────────────────────────────────────────────────────────────
+    # ── Legend ───────────────────────────────────────────────────────────────
     legend_items = [
         mpatches.Patch(facecolor=CLUSTER_PALETTE[3], edgecolor="white", lw=1,
                        label="LV / RV"),

@@ -1,28 +1,29 @@
 #!/usr/bin/env python3
 """
-exploratory_permissive_topologies.py
-====================================
-EXPLORATORY — not a manuscript figure / not part of the paper.
+SuppFigure3.py
 
-Personal visualisation aid. Renders, on a single A4 page, every
+Sensitivity analysis for the Figure 4 panel set / SuppFigure 4: every
 strictly-bifurcating, clone-supported topology that survives the MOST
-PERMISSIVE size rule (instead of the manuscript's monotone-median rule),
-so the full breadth of the binary-tree landscape can be eyeballed. Kept in
-the repo only for transparency; deliberately NOT wired into reproduce.sh,
-and its output lands in figures/exploratory/.
+PERMISSIVE size rule in place of the monotone-median clone-size rule
+used in the main analysis. Demonstrates that the topological landscape
+is qualitatively robust to relaxing the most opinionated of the three
+biological filters: 40 trees survive the permissive rule (vs 17 under
+monotone-median), but the headline conclusions are unchanged.
 
 Permissive size rule (per parent->child edge, child = node/leaf with >=1
-assigned clone): there exists ANY clone at the parent STRICTLY larger than
-ANY clone at the child  <=>  max(parent sizes) > min(child sizes). No
-expected/absolute size; pure existence; strict. The weakest "sizes step
-down somewhere along every lineage" criterion.
+assigned clone): there exists ANY clone at the parent STRICTLY larger
+than ANY clone at the child  <=>  max(parent sizes) > min(child sizes).
+No expected/absolute size; pure existence; strict. The weakest "sizes
+step down somewhere along every lineage" criterion.
 
 Funnel (all ~21.15M path combinations): 92 strictly bifurcating -> 50
-clone-supported -> {17 monotone-median (manuscript Figure 4a), 40 under
-this permissive rule}.
+clone-supported -> {17 monotone-median (SuppFigure 4 / the set
+sampled by Figure 4b), 40 under this permissive rule}.
 
 Co-occurrence arcs (AB-AVC, OFT-RV) are drawn only where the pair are
 direct sister leaves in that topology (draw_clado cooccurrence_sisters_only).
+
+Output: ../figures/SuppFigure3.png
 """
 
 import math
@@ -43,8 +44,7 @@ from _topology_utils import (
 )
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-OUT_DIR = os.path.join(_HERE, "..", "figures", "exploratory")
-OUT_PNG = os.path.join(OUT_DIR, "EXPLORATORY_permissive_topologies_A4.png")
+OUT_PNG = os.path.join(_HERE, "..", "figures", "SuppFigure3.png")
 N_COLS = 6
 DPI_OUT = 200
 A4_PORTRAIT = (8.27, 11.69)  # inches
@@ -117,14 +117,11 @@ def _draw_all(entries, out_png):
     for ax in axes_flat[n:]:
         ax.axis("off")
 
-    # Discreet, non-intrusive label (no red banner).
-    fig.text(0.01, 0.997, "exploratory — not a manuscript figure",
-             ha="left", va="top", fontsize=7, style="italic", color="#999999")
     fig.suptitle(
         f"Binary topologies under the most-permissive size rule "
         f"(any parent clone > any child clone, strict)\n"
-        f"{n} of 50 clone-supported trees  ·  manuscript Figure 4a keeps only "
-        f"the 17 monotone-median ones\n"
+        f"{n} of 50 clone-supported trees  ·  SuppFigure 4 (main-text "
+        f"Figure 4b's set) keeps only the 17 monotone-median ones\n"
         f"(L = likelihood relative to top tree; w = marginal support weight)",
         fontsize=8.5, y=0.992,
     )
@@ -139,7 +136,7 @@ def _draw_all(entries, out_png):
         mpatches.Patch(facecolor=CLUSTER_PALETTE[1], edgecolor="white",
                        linewidth=1, label="OFT / Atria"),
         Line2D([0], [0], color=ARC_COLOR, lw=1.5, alpha=0.85,
-               label="Co-occurrence (FDR<0.05), drawn only when sisters"),
+               label="Co-occurrence (FDR < 0.05)"),
         Line2D([0], [0], marker="o", color="w", markerfacecolor="#DDDDDD",
                markeredgecolor="#BBBBBB", markersize=7,
                label="Bifurcation node  (label = median clone size)"),
@@ -148,7 +145,7 @@ def _draw_all(entries, out_png):
                bbox_to_anchor=(0.5, 0.005), ncol=3, fontsize=7, frameon=False,
                handletextpad=0.5, columnspacing=1.4, labelspacing=0.4)
     plt.tight_layout(pad=0.5, rect=(0, 0.035, 1, 0.95))
-    os.makedirs(OUT_DIR, exist_ok=True)
+    os.makedirs(os.path.dirname(OUT_PNG), exist_ok=True)
     plt.savefig(out_png, dpi=DPI_OUT, facecolor="white")
     plt.close()
     print(f"  saved {out_png}")

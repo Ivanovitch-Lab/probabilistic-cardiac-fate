@@ -19,7 +19,8 @@ machinery for restriction-sequence topology figures:
   - `CLUSTER_PALETTE`, `ARC_COLOR`, `FATE_LABEL`, etc. : shared visual
                               constants matching restriction_cladogram.py
 
-Imported by Figure4a.py (5-topology overview), SuppFigure2.py
+Imported by Figure4b.py (top-5 mini-grid), SuppFigure4.py (full 17-topology
+overview), SuppFigure2.py
 (rank-1 vs rank-3 backbone DAGs), and Table4.py (per-topology summary).
 """
 
@@ -164,7 +165,8 @@ INT_R    = 0.036
 LINE_COL = "#BBBBBB"
 LINE_LW  = 1.4
 
-# Co-occurrence pairs that pass FDR ≤ 0.05 (small-clone bin),
+# Co-occurrence pairs that pass FDR ≤ 0.05 (Sox2-Cre, small-clone bin),
+# from cooccurrence_fdr_table.txt — drawn as arcs under the matching
 # sister leaves in each cladogram (matches restriction_cladogram.py).
 COOCCURRENCE_PAIRS = [
     ("AB", "AVC"),     # z=4.96, FDR=1.1×10⁻⁵
@@ -279,7 +281,7 @@ def enumerate_full_space(G, clones_df, progress=False):
       funnel             : {distinct, bifurcating, supported, monotone}
       survivors          : list (sorted by best_lp desc) of topologies
                            passing ALL filters; each is a dict with
-                           sig, combo_paths (best realisation, for drawing),
+                           sig, combo_paths (best path, for drawing),
                            best_idx, best_lp, weight, n_combos, combo_rank
       supported          : same, for the filter set with median DROPPED
                            (bifurcating + every node supported)
