@@ -59,7 +59,8 @@ from _topology_utils import (
 
 
 _HERE   = os.path.dirname(os.path.abspath(__file__))
-OUT_PNG = os.path.join(_HERE, "..", "figures", "Table4.png")
+OUT_PNG  = os.path.join(_HERE, "..", "figures", "Table4.png")
+OUT_XLSX = os.path.join(_HERE, "..", "figures", "Table4.xlsx")
 
 
 def main():
@@ -157,6 +158,10 @@ def main():
     plt.savefig(OUT_PNG, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close()
     print(f"✓ Saved: {OUT_PNG}")
+
+    # Editable Excel companion for the typesetter (same cell content as the PNG).
+    pd.DataFrame(cell_text, columns=col_labels).to_excel(OUT_XLSX, index=False)
+    print(f"✓ Saved: {OUT_XLSX}")
 
     print()
     df = pd.DataFrame(rows)

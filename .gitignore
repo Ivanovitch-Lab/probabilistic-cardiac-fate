@@ -15,6 +15,10 @@ venv/
 *.docx
 ~$*
 
+# Editable Excel companions written by Table*.py for journal submission
+# (kept local; the tracked PNGs in figures/ are the source of truth)
+figures/Table*.xlsx
+
 # Top-level images (only files under figures/ are tracked)
 /Figure1.png
 /Figure2.png

@@ -11,7 +11,7 @@ are products of edge supports along the path; they are not
 probabilities and need not sum to one across paths.
 
 The rendered table is the numerical companion to the strip plot in
-Figure 4b: same per-terminal numbers, in tabular form.
+Figure 4c: same per-terminal numbers, in tabular form.
 
 Inputs
 ------
@@ -35,6 +35,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _graph_utils import (
@@ -44,7 +45,8 @@ from _graph_utils import (
 
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-OUT_PNG = os.path.join(_HERE, "..", "figures", "Table3.png")
+OUT_PNG  = os.path.join(_HERE, "..", "figures", "Table3.png")
+OUT_XLSX = os.path.join(_HERE, "..", "figures", "Table3.xlsx")
 
 OBLIGATE_THRESHOLD = 0.99   # Edge is "obligate" if its edge support ≥ this
 
@@ -54,7 +56,7 @@ def _all_paths_to(G, root, term):
 
 
 def _summarise(G, root, term):
-    """Per-terminal summary numbers (matches Figure4b._summarise)."""
+    """Per-terminal summary numbers (matches Figure4c._summarise)."""
     paths = _all_paths_to(G, root, term)
     if not paths:
         return None
@@ -139,6 +141,10 @@ def plot_table(summaries):
     plt.savefig(OUT_PNG, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close()
     print(f"✓ Saved: {OUT_PNG}")
+
+    # Editable Excel companion for the typesetter (same cell content as the PNG).
+    pd.DataFrame(cell_text, columns=col_labels).to_excel(OUT_XLSX, index=False)
+    print(f"✓ Saved: {OUT_XLSX}")
 
 
 def main():

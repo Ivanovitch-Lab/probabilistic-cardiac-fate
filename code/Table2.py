@@ -40,6 +40,7 @@ PAIR_ORDER = [
 _HERE      = os.path.dirname(os.path.abspath(__file__))
 INPUT_FILE = os.path.join(_HERE, "..", "data", "Supplementary_Table_S2.csv")
 OUT_PNG    = os.path.join(_HERE, "..", "figures", "Table2.png")
+OUT_XLSX   = os.path.join(_HERE, "..", "figures", "Table2.xlsx")
 
 
 def main():
@@ -105,6 +106,12 @@ def main():
     plt.savefig(OUT_PNG, dpi=200, bbox_inches="tight", facecolor="white")
     plt.close()
     print(f"✓ Saved: {OUT_PNG}")
+
+    # Editable Excel companion for the typesetter (same cell content as the PNG).
+    df_xlsx = pd.DataFrame(cell_text, index=PAIR_ORDER, columns=col_labels)
+    df_xlsx.index.name = "Region pair"
+    df_xlsx.to_excel(OUT_XLSX)
+    print(f"✓ Saved: {OUT_XLSX}")
 
 
 if __name__ == "__main__":

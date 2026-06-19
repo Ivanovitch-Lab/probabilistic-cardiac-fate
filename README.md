@@ -23,7 +23,9 @@ This single command regenerates from scratch:
 - the **potency-graph construction** and clone-to-path attachments
   (writes `clone_path_attachments.csv`),
 - every figure (PNG, 300 dpi) and every table (PNG) in the main text
-  and supplement.
+  and supplement. (Each `Table*.py` also writes an editable `.xlsx`
+  companion locally for journal submission; the `.xlsx` files are
+  gitignored and not part of the repository.)
 
 All randomness uses a fixed seed (`RANDOM_SEED = 0`) set inside each
 script, so numerical outputs are bit-identical across runs and
@@ -35,7 +37,7 @@ platforms. Expected runtime: ~5 minutes on a 2024 MacBook.
 - Python packages: `numpy`, `pandas`, `scipy`, `matplotlib`, `networkx`,
   `pydot`
 - **`graphviz`** as a system dependency (`dot` binary on `PATH`) for the
-  DAG layout used by Figure 3c, Figure 4a, and SuppFigure 2:
+  DAG layout used by Figure 3c and SuppFigure 2:
   - macOS: `brew install graphviz`
   - Debian/Ubuntu: `apt install graphviz`
 
@@ -55,15 +57,19 @@ pip install numpy pandas scipy matplotlib networkx pydot
 │   ├── Figure3b.py        Cluster log2 fold-enrichment
 │   ├── Figure3c.py        k=3 clustered potency hierarchy DAG
 │   ├── Figure3d.py        Per-terminal path-score strip plot
-│   ├── Figure4a.py        Five plausible restriction-sequence topologies (overview)
-│   ├── Figure4b.py        Rank-1 restriction cladogram
-│   ├── Figure4c.py        Rank-3 restriction cladogram
+│   ├── Figure4a.py        Multifurcation-vs-binary best-path-score strip plot
+│   ├── Figure4b.py        Top-5 plausible binary topologies (mini-cladogram strip)
+│   ├── Figure4c.py        Rank-1 restriction cladogram
+│   ├── Figure4d.py        Rank-3 restriction cladogram
 │   ├── SuppFigure1.py     Sliding-window sensitivity heatmaps
 │   ├── SuppFigure2.py     Rank-1 vs rank-3 backbone DAGs (side-by-side)
+│   ├── SuppFigure3.py     40 binary topologies under the permissive size rule
+│   ├── SuppFigure4.py     Full 17 monotone-median binary topologies
 │   ├── Table1.py          Small-bin sensitivity table
 │   ├── Table2.py          Large-bin sensitivity table
 │   ├── Table3.py          Per-terminal backbone justification table
-│   ├── Table4.py          Per-topology summary for the 5 plausible topologies
+│   ├── Table4.py          Per-topology summary for the 17 plausible topologies
+│   ├── test_fast_signature.py  Correctness check for the fast topology de-duper
 │   ├── _build_attachments.py   regenerates clone_path_attachments.csv from S1 + S3
 │   └── _graph_utils.py, _sequence_utils.py, _topology_utils.py
 │                          shared library modules (not stand-alone scripts)
@@ -128,17 +134,21 @@ python Figure3d.py
 python Figure4a.py
 python Figure4b.py
 python Figure4c.py
+python Figure4d.py
 python SuppFigure2.py
+python SuppFigure3.py
+python SuppFigure4.py
 python Table1.py
 python Table2.py
 python Table3.py
 python Table4.py
 ```
 
-`Figure1b`, `Figure2a`, `Figure2b`, `Figure4b`, `Figure4c` are
+`Figure1b`, `Figure2a`, `Figure2b`, `Figure4c`, `Figure4d` are
 independent and can run without any other script. `Figure3d`,
-`Figure4a`, `SuppFigure2`, `Table3` and `Table4` all consume
-`clone_path_attachments.csv`, so they require Step 3 to have run first.
+`Figure4a`, `Figure4b`, `SuppFigure2`, `SuppFigure3`, `SuppFigure4`,
+`Table3` and `Table4` all consume `clone_path_attachments.csv`, so
+they require Step 3 to have run first.
 
 ## Citation
 
