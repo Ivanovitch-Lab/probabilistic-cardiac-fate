@@ -17,7 +17,7 @@ score of the SINGLE BEST 6-path combination producing this topology,
 divided by the score of the overall best combination across all
 combinations (= 1.0 by construction). Annotated on each panel.
 
-The full 17-topology credible set is shown in SuppFigure 4.
+The full 17-topology credible set is shown in SuppFigure 3.
 
 Output: ../figures/Figure4b.png
 """
@@ -87,7 +87,7 @@ def main():
         ax.text(0.5, 1.02, f"S{i + 1}", ha="center", va="bottom",
                 fontsize=7.5, fontweight="bold", transform=ax.transAxes,
                 color="#333333")
-        ax.text(0.5, 1.005, f"score = {rel:.2f}",
+        ax.text(0.5, 1.005, f"L = {rel:.2f}",
                 ha="center", va="top", fontsize=5.5,
                 transform=ax.transAxes, color="#888888")
 

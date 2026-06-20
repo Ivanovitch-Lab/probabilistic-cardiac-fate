@@ -19,7 +19,7 @@ machinery for restriction-sequence topology figures:
   - `CLUSTER_PALETTE`, `ARC_COLOR`, `FATE_LABEL`, etc. : shared visual
                               constants matching restriction_cladogram.py
 
-Imported by Figure4b.py (top-5 mini-grid), SuppFigure4.py (full 17-topology
+Imported by Figure4b.py (top-5 mini-grid), SuppFigure3.py (full 17-topology
 overview), SuppFigure2.py
 (rank-1 vs rank-3 backbone DAGs), and Table4.py (per-topology summary).
 """

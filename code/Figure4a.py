@@ -30,8 +30,8 @@ Scope: every topology where (i) every internal node has at least one
 assigned clone AND (ii) every parent->child edge has at least one parent
 clone strictly larger than at least one child clone — the permissive size
 rule. Applied symmetrically to binary and multifurcating shapes for a fair
-like-for-like comparison, and matching the filter used for SuppFigure 3
-(so the binary subset shown here is exactly the 40 of SuppFigure 3).
+like-for-like comparison, and matching the filter used for SuppFigure 4
+(so the binary subset shown here is exactly the 40 of SuppFigure 4).
 
 Companion panels:
   Figure 4b — all 17 strictly-binary clone-supported, monotone-median
@@ -216,7 +216,7 @@ def main():
     ax.set_ylim(-0.55, 1.55)
     ax.set_xlim(0, 1.06)
     ax.set_xlabel(
-        "best-path score\n(relative to overall best = 1.0)",
+        "L\n(relative to overall best = 1.0)",
         fontsize=6)
     ax.tick_params(axis="x", labelsize=5, pad=1.5, length=2.5, width=0.5)
     ax.tick_params(axis="y", length=0, pad=2)
