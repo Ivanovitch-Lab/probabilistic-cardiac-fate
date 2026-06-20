@@ -11,7 +11,7 @@ are products of edge supports along the path; they are not
 probabilities and need not sum to one across paths.
 
 The rendered table is the numerical companion to the strip plot in
-Figure 4c: same per-terminal numbers, in tabular form.
+Figure 3d: same per-terminal numbers, in tabular form.
 
 Inputs
 ------
