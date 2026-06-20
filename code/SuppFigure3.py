@@ -103,11 +103,11 @@ def main():
         draw_clado(ax, seq, title="", n_combos=1, log_p=e["best_lp"],
                    margin=1.0, clones_df=clones_df,
                    cooccurrence_sisters_only=True)
-        rel = math.exp(e["best_lp"] - lp_top)  # likelihood relative to top
-        ax.text(0.5, 1.005, f"S{i + 1}",
+        rel = math.exp(e["best_lp"] - lp_top)  # relative score (vs top of drawn set)
+        ax.text(0.5, 1.005, f"{i + 1}",
                 ha="center", va="bottom", fontsize=8, fontweight="bold",
                 transform=ax.transAxes, color="#333333")
-        ax.text(0.5, 0.995, f"L={rel:.2f}  w={_fmt_pct(e['weight'])}",
+        ax.text(0.5, 0.995, f"S={rel:.2f}  w={_fmt_pct(e['weight'])}",
                 ha="center", va="top", fontsize=5.5,
                 transform=ax.transAxes, color="#888888")
 
@@ -120,7 +120,7 @@ def main():
         f"strictly bifurcating · every bifurcation clone-supported · "
         f"monotone median clone size — yet all binary trees together carry "
         f"only {res['weight_binary']:.1%} of total support\n"
-        f"(L = likelihood relative to top tree; w = marginal support weight)",
+        f"(S = relative score; w = marginal support weight)",
         fontsize=9, fontweight="bold", y=1.0,
     )
 

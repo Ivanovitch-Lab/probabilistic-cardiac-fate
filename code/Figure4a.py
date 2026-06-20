@@ -197,7 +197,7 @@ def main():
     if multi:
         best_multi_peak = max(r["peak_rel"] for r in multi)
         best_bin_peak = max(r["peak_rel"] for r in binary) if binary else 0
-        print(f"Best peak relative likelihood: binary {best_bin_peak:.3f}, "
+        print(f"Best peak relative score: binary {best_bin_peak:.3f}, "
               f"multifurcating {best_multi_peak:.3f}.")
 
     # ── Compact column-width strip plot, matched in size to Figure 3d ────
@@ -216,7 +216,7 @@ def main():
     ax.set_ylim(-0.55, 1.55)
     ax.set_xlim(0, 1.06)
     ax.set_xlabel(
-        "L\n(relative to overall best = 1.0)",
+        "S\n(relative to overall best = 1.0)",
         fontsize=6)
     ax.tick_params(axis="x", labelsize=5, pad=1.5, length=2.5, width=0.5)
     ax.tick_params(axis="y", length=0, pad=2)

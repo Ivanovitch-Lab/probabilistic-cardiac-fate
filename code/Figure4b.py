@@ -84,10 +84,10 @@ def main():
         draw_clado(ax, seq, title="", n_combos=1, log_p=e["best_lp"],
                    margin=1.0, clones_df=clones_df)
         rel = math.exp(e["best_lp"] - global_best_lp)
-        ax.text(0.5, 1.02, f"S{i + 1}", ha="center", va="bottom",
+        ax.text(0.5, 1.02, f"{i + 1}", ha="center", va="bottom",
                 fontsize=7.5, fontweight="bold", transform=ax.transAxes,
                 color="#333333")
-        ax.text(0.5, 1.005, f"L = {rel:.2f}",
+        ax.text(0.5, 1.005, f"S = {rel:.2f}",
                 ha="center", va="top", fontsize=5.5,
                 transform=ax.transAxes, color="#888888")
 

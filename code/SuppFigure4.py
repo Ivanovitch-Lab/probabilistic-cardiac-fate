@@ -108,10 +108,10 @@ def _draw_all(entries, out_png):
                    margin=1.0, clones_df=clones_df,
                    cooccurrence_sisters_only=True)
         rel = math.exp(e["best_lp"] - lp_top)
-        ax.text(0.5, 1.01, f"S{e['rank']}", ha="center", va="bottom",
+        ax.text(0.5, 1.01, f"{e['rank']}", ha="center", va="bottom",
                 fontsize=7, fontweight="bold", transform=ax.transAxes,
                 color="#333333")
-        ax.text(0.5, 1.0, f"L={rel:.2f}  w={_fmt_pct(e['weight'])}",
+        ax.text(0.5, 1.0, f"S={rel:.2f}  w={_fmt_pct(e['weight'])}",
                 ha="center", va="top", fontsize=5, transform=ax.transAxes,
                 color="#999999")
     for ax in axes_flat[n:]:
@@ -122,7 +122,7 @@ def _draw_all(entries, out_png):
         f"(any parent clone > any child clone, strict)\n"
         f"{n} of 50 clone-supported trees  ·  SuppFigure 3 (main-text "
         f"Figure 4b's set) keeps only the 17 monotone-median ones\n"
-        f"(L = likelihood relative to top tree; w = marginal support weight)",
+        f"(S = relative score; w = marginal support weight)",
         fontsize=8.5, y=0.992,
     )
 
