@@ -12,12 +12,16 @@ bifurcation, every bifurcation clone-supported, monotone median clone
 size), exhaustively enumerated over the full ~21M-combination path space
 (_topology_utils.enumerate_full_space).
 
-Best-path score is the same metric used on Figure 4a's x-axis —
-score of the SINGLE BEST 6-path combination producing this topology,
-divided by the score of the overall best combination across all
-combinations (= 1.0 by construction). Annotated on each panel.
+Best-path score (S) is each topology's joint score as a fraction of the
+top-ranked monotone-median binary topology shown here (= 1.0 for the
+rank-1 panel by construction). Same normalization as Table 4 and
+SuppFigure 4, so a reader comparing those three artifacts sees the
+same value for the same tree. (Figure 4a's x-axis uses a different
+normalization, to the overall global best across all binary AND
+multifurcating topologies, including non-monotone shapes that lie just
+above the top monotone tree.)
 
-The full 17-topology credible set is shown in SuppFigure 3.
+The full 17-topology credible set is shown in SuppFigure 4.
 
 Output: ../figures/Figure4b.png
 """
@@ -35,7 +39,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _graph_utils import compute_edge_supports, build_graph
 from _sequence_utils import derive_restriction_sequence
 from _topology_utils import (
-    all_paths_per_terminal, enumerate_full_space, load_clone_regions,
+    enumerate_full_space, load_clone_regions,
     draw_clado, CLUSTER_PALETTE, ARC_COLOR,
 )
 
@@ -52,23 +56,19 @@ def main():
     G = build_graph(edge_prob)
     clones_df = load_clone_regions()
 
-    # Global best lp = rank-1 combination's joint lp (= sum of per-terminal
-    # rank-1 log path-scores). This is the denominator of best-path.
-    ppt = all_paths_per_terminal(G)
-    terms = sorted(ppt.keys())
-    global_best_lp = sum(math.log(max(ppt[t][0][1], 1e-30)) for t in terms)
-
     print("Enumerating the full combination space (no top-K cutoff) ...")
     res = enumerate_full_space(G, clones_df, progress=True)
     survivors = res["survivors"]
     n = min(N_TOP, len(survivors))
     top = survivors[:n]
 
+    top_monotone_lp = survivors[0]["best_lp"]
+
     print(f"\nTop {n} of {len(survivors)} monotone-median survivors:")
     for i, e in enumerate(top, 1):
-        rel = math.exp(e["best_lp"] - global_best_lp)
+        rel = math.exp(e["best_lp"] - top_monotone_lp)
         print(f"  S{i}: best_lp={e['best_lp']:.3f}  "
-              f"best-path={rel:.3f}  weight={e['weight']:.3%}  "
+              f"S={rel:.3f}  weight={e['weight']:.3%}  "
               f"n_combos={e['n_combos']:,}")
 
     # ── 1 x N_TOP strip layout, sized for main-figure economy ───────────
@@ -83,7 +83,7 @@ def main():
         seq = derive_restriction_sequence(e["combo_paths"])
         draw_clado(ax, seq, title="", n_combos=1, log_p=e["best_lp"],
                    margin=1.0, clones_df=clones_df)
-        rel = math.exp(e["best_lp"] - global_best_lp)
+        rel = math.exp(e["best_lp"] - top_monotone_lp)
         ax.text(0.5, 1.02, f"{i + 1}", ha="center", va="bottom",
                 fontsize=7.5, fontweight="bold", transform=ax.transAxes,
                 color="#333333")

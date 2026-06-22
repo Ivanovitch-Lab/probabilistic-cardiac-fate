@@ -30,8 +30,8 @@ Scope: every topology where (i) every internal node has at least one
 assigned clone AND (ii) every parent->child edge has at least one parent
 clone strictly larger than at least one child clone — the permissive size
 rule. Applied symmetrically to binary and multifurcating shapes for a fair
-like-for-like comparison, and matching the filter used for SuppFigure 4
-(so the binary subset shown here is exactly the 40 of SuppFigure 4).
+like-for-like comparison, and matching the filter used for SuppFigure 3
+(so the binary subset shown here is exactly the 40 of SuppFigure 3).
 
 Companion panels:
   Figure 4b — all 17 strictly-binary clone-supported, monotone-median

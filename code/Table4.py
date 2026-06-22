@@ -4,11 +4,11 @@ Table4.py
 =========
 Reproduces Table 4 of the accompanying manuscript: a per-topology summary
 for the biologically-plausible restriction-sequence topologies sampled in
-Figure 4b (top 5) and fully enumerated in SuppFigure 3 (all 17), ranked by
+Figure 4b (top 5) and fully enumerated in SuppFigure 4 (all 17), ranked by
 joint score (product of path scores across the six terminals; path score =
 product of edge supports along the path).
 
-Built from the SAME exhaustive enumeration as Figure 4b / SuppFigure 3
+Built from the SAME exhaustive enumeration as Figure 4b / SuppFigure 4
 (_topology_utils.enumerate_full_space) so all three are always consistent
 — every topology meeting the three biological filters (strictly
 bifurcating, every bifurcation clone-supported, monotone median clone
@@ -149,7 +149,7 @@ def main():
     fig.suptitle(
         f"All {len(rows)} biologically-plausible restriction-sequence "
         f"topologies\n(full enumeration of {res['total']:,} path "
-        f"combinations; cf. Figure 4b for the top 5 and SuppFigure 3 "
+        f"combinations; cf. Figure 4b for the top 5 and SuppFigure 4 "
         f"for the full set)",
         fontsize=10, fontweight="bold", y=0.99,
     )

@@ -63,8 +63,8 @@ pip install numpy pandas scipy matplotlib networkx pydot
 │   ├── Figure4d.py        Rank-3 restriction cladogram
 │   ├── SuppFigure1.py     Sliding-window sensitivity heatmaps
 │   ├── SuppFigure2.py     Rank-1 vs rank-3 backbone DAGs (side-by-side)
-│   ├── SuppFigure3.py     Full 17 monotone-median binary topologies
-│   ├── SuppFigure4.py     40 binary topologies under the permissive size rule
+│   ├── SuppFigure3.py     40 binary topologies under the permissive size rule
+│   ├── SuppFigure4.py     Full 17 monotone-median binary topologies
 │   ├── Table1.py          Small-bin sensitivity table
 │   ├── Table2.py          Large-bin sensitivity table
 │   ├── Table3.py          Per-terminal backbone justification table
