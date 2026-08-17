@@ -17,8 +17,6 @@ two terminals that share an intermediate node at level k stay together until
 that level. The function `mrca_depth` quantifies this; the binary tree is
 built from those depths via single-linkage clustering.
 
-This is a helper module (no `__main__` entry point) — `kth_best_paths` and
-`derive_restriction_sequence` are imported by the figure-producing scripts.
 """
 
 import os
