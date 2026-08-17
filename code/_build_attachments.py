@@ -59,8 +59,7 @@ def main():
     if not os.path.exists(EDGES_CSV):
         sys.exit(f"ERROR: cannot find {EDGES_CSV}. Run Figure3a.py first.")
 
-    # ── Load clones (all 94 — the 142-cell clone IS used here, since it
-    # is the unique observed instance of the multipotent root pattern).
+    # ── Load clones (all 94).
     clones = pd.read_csv(CLONES_CSV, encoding="utf-8-sig")
     clones = clones[clones["clone_id"].notna()].copy()
     clones["pattern_canon"] = clones["leaf_regions"].apply(canon)
